@@ -1,0 +1,53 @@
+{
+    "builders": [
+      {
+        "type": "amazon-ebs",
+        "region": "ap-southeast-2",
+        "source_ami": "ami-08bd00d7713a39e7d",
+        "instance_type": "t2.micro",
+        "ssh_username": "centos",
+        "ami_name": "packer-nginx-{{timestamp}}",
+        "run_tags": {
+          "Name": "nginx-image"
+          }, 
+
+        "tags":
+         {
+          "Name": "nginx-image"
+          } 
+          
+      }
+    ],
+  
+    "provisioners": [
+      {
+        "type": "file",  
+        "source": "files/repo",
+        "destination": "~/repo"
+      },
+
+      {
+        "type": "file",  
+        "source": "files/cert",
+        "destination": "~/cert"
+      },
+
+      {
+        "type": "file",  
+        "source": "files/conf",
+        "destination": "~/conf"
+      },
+
+      {
+        "type": "shell",
+        "inline": [
+           "sudo mv ~/repo/nginx.repo  /etc/yum.repos.d/",
+           "sudo yum -y update",
+           "sudo yum install -y nginx",
+           "sudo systemctl start nginx",
+           "sudo systemctl enable nginx"
+        ]
+      
+      }
+    ]
+  }
